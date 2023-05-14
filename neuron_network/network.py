@@ -36,7 +36,7 @@ class Network:
                 for w in range(len(neuron.weights)):
                     neuron.weights[w] = neuron.weights[w] + \
                                         (neuron.learning_rate * \
-                                         (layer.previous_layer.output_cache[w] * neuron.delta))
+                                         (layer.previous_layer.output_cache[w]) * neuron.delta)
 
     def train(self, inputs: List[List[float]], expected: List[List[float]]) ->None:
         for location, xs in enumerate(inputs):
@@ -50,6 +50,7 @@ class Network:
         correct = 0
         for input, expected in zip(inputs, expecteds):
             result: T = interpret_output(self.outputs(input))
+            print(f"{result} vs. {expected}")
             if result == expected:
                 correct += 1
         percentage: float = correct / len(inputs)

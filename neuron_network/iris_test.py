@@ -23,6 +23,8 @@ if __name__ == "__main__":
         irises: List = list(csv.reader(iris_file))
         shuffle(irises)
         for iris in irises:
+            if not iris:
+                continue
             parameters: List[float] = [float(n) for n in iris[0:4]]
             iris_parameters.append(parameters)
             species: str = iris[4]
@@ -34,4 +36,12 @@ if __name__ == "__main__":
                 iris_classifications.append([0.0, 0.0, 1.0])
             iris_species.append(species)
         normalize_by_feature_scaling(iris_parameters)
-    iris_network: Network = Network([4, 6, 3], 0.3)
+    iris_network: Network = Network([4, 6, 3], 0.2)
+    iris_trainers: List[List[float]] = iris_parameters[0:140]
+    iris_trainers_corrects: List[List[float]] = iris_classifications[0:140]
+    for _ in range(100):
+        iris_network.train(iris_trainers, iris_trainers_corrects)
+    iris_testers: List[List[float]] = iris_parameters[140:150]
+    iris_testers_corrects: List[str] = iris_species[140:150]
+    iris_results = iris_network.validate(iris_testers, iris_testers_corrects, iris_interpret_output)
+    print(f"{iris_results[0]} correct of {iris_results[1]} = {iris_results[2] * 100}%")
